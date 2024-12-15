@@ -1,25 +1,13 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-
 
 def index(request):
-    municipio_nombre = "Pamplonita"
-    return render(
-        request, "universo/index.html", {"municipio_nombre": municipio_nombre}
-    )
+    return render(request, "gestionPersonas.html")
 
+def add_person(request):
+    # lógica para la vista add_person
+    return render(request, 'add_person.html')
 
-def contacto(request):
-    if request.method == "POST":
-        # Lógica para procesar el formulario
-        nombre = request.POST["name"]
-        email = request.POST["email"]
-        mensaje = request.POST["message"]
-
-        # Procesar los datos (ejemplo: guardarlos en la base de datos o enviarlos por correo)
-        # Aquí solo estamos mostrando una respuesta de ejemplo.
-        return HttpResponse(
-            f"Gracias por tu mensaje, {nombre}. Nos pondremos en contacto contigo pronto."
-        )
-
-    return render(request, "universo/contacto.html")
+def gestion_personas(request):
+    # lógica para la vista gestion_personas
+    personas = [...]  # Obtén la lista de personas desde tu base de datos o modelo
+    return render(request, 'gestionPersonas.html', {'personas': personas})
