@@ -1,51 +1,46 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from universo.models import Persona
+from universo.models import Persona, Vivienda
 
 
 def index(request):
     return render(request, "gestionPersonas.html")
 
 
-def add_person(request):
-    # lógica para la vista add_person
-    return render(request, "add_person.html")
+def eliminar_persona(request, id):
+    persona = Persona.objects.get(id=id)
+    persona.delete()
+    return redirect("/gestion_personas/")
 
 
-def contacto(request):
-    if request.method == "POST":
-        # Lógica para procesar el formulario
-        nombre = request.POST["name"]
-        email = request.POST["email"]
-        mensaje = request.POST["message"]
-
-        # Procesar los datos (ejemplo: guardarlos en la base de datos o enviarlos por correo)
-        # Aquí solo estamos mostrando una respuesta de ejemplo.
-        return HttpResponse(
-            f"Gracias por tu mensaje, {nombre}. Nos pondremos en contacto contigo pronto."
-        )
-
-    return render(request, "universo/contacto.html")
-
-
-def agregarPersona(request):
+def addPerson(request):
     if request.method == "POST":
         # Lógica para procesar el formulario
         nombre = request.POST["nombre"]
-        telefono = request.POST["telefono"] if "telefono" in request.POST else None
+        telefono = request.POST["telefono"]
         edad = request.POST["edad"]
         sexo = request.POST["sexo"]
-        ahorros = request.POST["ahorros"] if "ahorros" in request.POST else 0.0
+        ahorros = request.POST["ahorros"]
         vivienda_residencial = (
-            request.POST["vivienda_residencial"]
+            int(request.POST["vivienda_residencial"])
             if "vivienda_residencial" in request.POST
             else None
         )
-        cabeza_de_familia = (
-            request.POST["cabeza_de_familia"]
-            if "cabeza_de_familia" in request.POST
-            else None
-        )
+        cabeza_de_familia = int(request.POST["cabeza_de_familia"])
+
+        if ahorros == "":
+            ahorros = 0.0
+        if telefono == "":
+            telefono = None
+        if vivienda_residencial == "":
+            vivienda_residencial = None
+        else:
+            if not Vivienda.objects.filter(pk=vivienda_residencial).exists():
+                vivienda_residencial = None
+            else:
+                vivienda_residencial = Vivienda.objects.get(pk=vivienda_residencial)
+        if cabeza_de_familia == "":
+            cabeza_de_familia = None
 
         try:
             edad = int(edad)
@@ -88,7 +83,7 @@ def agregarPersona(request):
             sexo=sexo,
             ahorros=ahorros,
             vivienda_residencial=vivienda_residencial,
-            cabeza_de_familia=cabeza_de_familia,
+            cabeza_de_familia=Persona.objects.get(pk=cabeza_de_familia),
         )
 
         try:
@@ -96,14 +91,23 @@ def agregarPersona(request):
         except Exception as e:
             return HttpResponse(f"Error: {e}")
         #
-        return HttpResponse(
-            f"Gracias por tu mensaje, {nombre}. Nos pondremos en contacto contigo pronto."
-        )
+        return render(request, "addPerson.html", {"success": True})
 
-    return render(request, "universo/index.html")
+    personas = Persona.objects.all()
+    viviendas = Vivienda.objects.all()
+
+    return render(
+        request,
+        "addPerson.html",
+        {"success": False, "personas": personas, "viviendas": viviendas},
+    )
 
 
 def gestion_personas(request):
-    # lógica para la vista gestion_personas
-    personas = [...]  # Obtén la lista de personas desde tu base de datos o modelo
+
+    personas = Persona.objects.all()
+
+    for persona in personas:
+        print(persona.cabeza_de_familia)
+
     return render(request, "gestionPersonas.html", {"personas": personas})
