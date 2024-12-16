@@ -1,0 +1,41 @@
+{% extends "./index.html" %}
+{% block title %} Lab 0 {% endblock %}
+{% block body %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Listado de Personas</h2>
+        <a href="/add_person/" class="btn btn-primary">Agregar Persona</a>
+    </div>
+    <div class="table-responsive py-2">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th class="align-middle">Nombre</th>
+                    <th class="align-middle">Teléfono</th>
+                    <th class="align-middle">Edad</th>
+                    <th class="align-middle">Sexo</th>
+                    <th class="align-middle">Ahorros</th>
+                    <th class="align-middle">Vivienda</th>
+                    <th class="align-middle">Cabeza de Familia</th>
+                    <th class="align-middle" colspan="2">Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in personas %}
+                <tr>
+                    <td>{{ c.nombre }}</td>
+                    <td>{{ c.telefono }}</td>
+                    <td>{{ c.edad }}</td>
+                    <td>{{ c.get_sexo_display }}</td>
+                    <td>{{ c.ahorros }}</td>
+                    <td>{{ c.vivienda_direccion }}</td>
+                    <td>{{ c.cabeza_de_familia.nombre}}</td>
+                    <td><a href="edicionPersona/{{ c.id }}" class="btn btn-info">Editar</a></td>
+                    <td><a href="eliminarPersona/{{ c.id }}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
