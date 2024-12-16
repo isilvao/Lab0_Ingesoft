@@ -13,7 +13,7 @@ class Persona(models.Model):
     edad = models.BigIntegerField()
     sexo = models.CharField(max_length=1, choices=choices_sexo)
     ahorros = models.DecimalField(
-        null=True, blank=True, max_digits=10, decimal_places=2
+        null=True, blank=True, max_digits=15, decimal_places=2
     )
     vivienda_residencial = models.ForeignKey(
         "Vivienda", on_delete=models.CASCADE, null=True, blank=True
