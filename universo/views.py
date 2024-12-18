@@ -74,6 +74,11 @@ def gestion_municipios(request):
     return render(request, "gestionMunicipios.html")
 
 
+def gestion_viviendas(request):
+    viviendas = Vivienda.objects.all()
+    return render(request, "gestionViviendas.html", {"viviendas": viviendas})
+
+
 # VIVIENDAS
 def agregar_vivienda(request):
     if request.method == "POST":
@@ -123,12 +128,6 @@ def agregar_vivienda(request):
     )
     """
     return HttpResponse("Viviendas: " + str(personas) + str(municipios))
-
-
-def gestion_viviendas(request):
-    viviendas = Vivienda.objects.all()
-    return render(request, "gestionViviendas.html", {"viviendas": viviendas})
-
 
 # MUNICIPIOS
 def agregar_municipio(request):

@@ -12,4 +12,6 @@ urlpatterns = [
     ),
     path("agregar_vivienda/", views.agregar_vivienda, name="agregar_vivienda"),
     path("agregar_municipio/", views.agregar_municipio, name="agregar_municipio"),
+    path("gestion_viviendas/", views.gestion_viviendas, name="gestion_viviendas"),
+    path("gestion_municipios/", views.gestion_municipios, name="gestion_municipios"),
 ]
