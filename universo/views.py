@@ -1,11 +1,19 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from universo.models import Persona, Proyecto, Vivienda, Municipio
+from universo.models import (
+    Persona,
+    Proyecto,
+    Vivienda,
+    Municipio,
+    Evento,
+    MunicipioEvento,
+)
 from universo.validations import (
     validatePersona,
     validateVivienda,
     validateMunicipio,
     validateProyecto,
+    validateEvento,
 )
 
 
@@ -254,3 +262,75 @@ def eliminar_proyecto(request, id):
     proyecto = Proyecto.objects.get(id=id)
     proyecto.delete()
     return redirect("/gestion_proyectos/")
+
+
+# EVENTOS
+def agregar_evento(request):
+    if request.method == "POST":
+
+        resultado, respuesta = validateEvento(request)
+
+        if resultado:
+            try:
+                respuesta[0].save()
+                respuesta[1].save()
+            except Exception as e:
+                """
+                return render(
+                    request,
+                    "agregarEvento.html",
+                    {
+                        "success": False,
+                        "error": respuesta,
+                    },
+                    status=400,
+                )
+                """
+                return HttpResponse("Error: " + str(e))
+            # return render(request, "agregarEvento.html", {"success": True})
+            return HttpResponse("Evento agregado correctamente")
+        else:
+            """
+            return render(
+                request,
+                "agregarEvento.html",
+                {
+                    "success": False,
+                    "error": respuesta,
+                },
+                status=400,
+            )
+            """
+            return HttpResponse("Error: " + str(respuesta), status=400)
+
+    municipios = Municipio.objects.all()
+
+    """
+    return render(
+        request,
+        "agregarEvento.html",
+        {"success": None, "municipios": municipios},
+    )
+    """
+    return HttpResponse("Eventos: " + str(municipios))
+
+
+def gestion_eventos(request):
+    eventos = Evento.objects.all()
+
+    resultados = MunicipioEvento.objects.select_related("municipio", "evento")
+
+    for resultado in resultados:
+        print(
+            f"Evento: {resultado.evento.nombre}, Municipio: {resultado.municipio.nombre}"
+        )
+
+    return render(request, "gestionEventos.html", {"eventos": eventos})
+
+
+def eliminar_evento(request, id):
+    evento = Evento.objects.get(id=id)
+    eventoMunicipio = MunicipioEvento.objects.get(evento=evento)
+    eventoMunicipio.delete()
+    evento.delete()
+    return redirect("/gestion_eventos/")

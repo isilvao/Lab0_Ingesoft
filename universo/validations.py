@@ -1,4 +1,12 @@
-from universo.models import Persona, Vivienda, Municipio, Proyecto, Evento
+from datetime import datetime
+from universo.models import (
+    Persona,
+    Vivienda,
+    Municipio,
+    Proyecto,
+    Evento,
+    MunicipioEvento,
+)
 
 
 def validatePersona(request):
@@ -238,3 +246,56 @@ def validateProyecto(request):
     )
 
     return True, proyecto
+
+
+def validateEvento(request):
+    nombre = request.POST["nombre"]
+    descripcion = request.POST["descripcion"]
+    fecha_inicio = request.POST["fecha_inicio"]
+    fecha_fin = request.POST["fecha_fin"]
+    aforo = request.POST["aforo"]
+    municipio = request.POST["municipio"] if "municipio" in request.POST else None
+
+    if nombre == "":
+        return False, "El nombre es obligatorio"
+    if descripcion == "":
+        return False, "La descripción es obligatoria"
+
+    try:
+        fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
+    except ValueError:
+        return False, "La fecha de inicio no es válida"
+    try:
+        fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
+    except ValueError:
+        return False, "La fecha de fin no es válida"
+
+    if fecha_inicio > fecha_fin:
+        return False, "La fecha de inicio no puede ser mayor a la fecha de fin"
+
+    if aforo == "" or not aforo.isdigit() or int(aforo) <= 0:
+        return (
+            False,
+            "El aforo es obligatorio, debe ser un número entero positivo mayor a 0",
+        )
+    else:
+        aforo = int(aforo)
+
+    if municipio == "" or not Municipio.objects.filter(pk=municipio).exists():
+        return False, "Escoja un municipio válido"
+    else:
+        municipio = Municipio.objects.get(pk=municipio)
+
+    evento = Evento(
+        nombre=nombre,
+        descripcion=descripcion,
+        fecha_inicio=fecha_inicio,
+        fecha_fin=fecha_fin,
+        aforo=aforo,
+    )
+
+    evento_municipio = MunicipioEvento(municipio=municipio, evento=evento)
+
+    respuesta = (evento, evento_municipio)
+
+    return True, respuesta
