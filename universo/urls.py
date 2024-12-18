@@ -31,4 +31,11 @@ urlpatterns = [
         views.eliminar_proyecto,
         name="eliminar_proyecto",
     ),
+    path("gestion_eventos/", views.gestion_eventos, name="gestion_eventos"),
+    path("agregar_evento/", views.agregar_evento, name="agregar_evento"),
+    path(
+        "gestion_eventos/eliminarEvento/<int:id>",
+        views.eliminar_evento,
+        name="eliminar_evento",
+    ),
 ]
