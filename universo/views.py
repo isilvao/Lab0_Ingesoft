@@ -222,11 +222,11 @@ def agregar_municipio(request):
                     status=400,
                 )
                 """
-                return HttpResponse("Error: " + str(e))
-            # return render(request, "agregarMunicipio.html", {"success": True})
-            return HttpResponse("Municipio agregado correctamente")
+                # return HttpResponse("Error: " + str(e))
+            return render(request, "agregarMunicipio.html", {"success": True})
+            # return HttpResponse("Municipio agregado correctamente")
         else:
-            """
+            
             return render(
                 request,
                 "agregarMunicipio.html",
@@ -236,19 +236,19 @@ def agregar_municipio(request):
                 },
                 status=400,
             )
-            """
-            return HttpResponse("Error: " + str(respuesta), status=400)
+            
+            # return HttpResponse("Error: " + str(respuesta), status=400)
 
     personas = Persona.objects.all()
 
-    """
+    
     return render(
         request,
         "agregarMunicipio.html",
         {"success": None, "personas": personas},
     )
-    """
-    return HttpResponse("Municipios: " + str(personas))
+    
+    # return HttpResponse("Municipios: " + str(personas))
 
 
 def gestion_municipios(request):
@@ -337,7 +337,7 @@ def agregar_evento(request):
                 respuesta[0].save()
                 respuesta[1].save()
             except Exception as e:
-                """
+                
                 return render(
                     request,
                     "agregarEvento.html",
@@ -347,12 +347,11 @@ def agregar_evento(request):
                     },
                     status=400,
                 )
-                """
-                return HttpResponse("Error: " + str(e))
-            # return render(request, "agregarEvento.html", {"success": True})
-            return HttpResponse("Evento agregado correctamente")
+                
+                # return HttpResponse("Error: " + str(e))
+            return render(request, "agregarEvento.html", {"success": True})
+            # return HttpResponse("Evento agregado correctamente")
         else:
-            """
             return render(
                 request,
                 "agregarEvento.html",
@@ -362,19 +361,19 @@ def agregar_evento(request):
                 },
                 status=400,
             )
-            """
-            return HttpResponse("Error: " + str(respuesta), status=400)
+            
+            # return HttpResponse("Error: " + str(respuesta), status=400)
 
     municipios = Municipio.objects.all()
 
-    """
+    
     return render(
         request,
         "agregarEvento.html",
         {"success": None, "municipios": municipios},
     )
-    """
-    return HttpResponse("Eventos: " + str(municipios))
+    
+    # return HttpResponse("Eventos: " + str(municipios))
 
 
 def gestion_eventos(request):
