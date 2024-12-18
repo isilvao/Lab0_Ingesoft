@@ -3,13 +3,32 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("add_person/", views.agregar_persona, name="agregar_persona"),
     path("gestion_personas/", views.gestion_personas, name="gestion_personas"),
+    path("add_person/", views.agregar_persona, name="agregar_persona"),
     path(
         "gestion_personas/eliminarPersona/<int:id>",
         views.eliminar_persona,
         name="eliminar_persona",
     ),
+    path("gestion_viviendas/", views.gestion_viviendas, name="gestion_viviendas"),
     path("agregar_vivienda/", views.agregar_vivienda, name="agregar_vivienda"),
+    path(
+        "gestion_viviendas/eliminarVivienda/<int:id>",
+        views.eliminar_vivienda,
+        name="eliminar_vivienda",
+    ),
+    path("gestion_municipios/", views.gestion_municipios, name="gestion_municipios"),
     path("agregar_municipio/", views.agregar_municipio, name="agregar_municipio"),
+    path(
+        "gestion_municipios/eliminarMunicipio/<int:id>",
+        views.eliminar_municipio,
+        name="eliminar_municipio",
+    ),
+    path("gestion_proyectos/", views.gestion_proyectos, name="gestion_proyectos"),
+    path("agregar_proyecto/", views.agregar_proyecto, name="agregar_proyecto"),
+    path(
+        "gestion_proyectos/eliminarProyecto/<int:id>",
+        views.eliminar_proyecto,
+        name="eliminar_proyecto",
+    ),
 ]
