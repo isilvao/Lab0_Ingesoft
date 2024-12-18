@@ -23,7 +23,6 @@ urlpatterns = [
     ),
     path("gestion_municipios/", views.gestion_municipios, name="gestion_municipios"),
     path("agregar_municipio/", views.agregar_municipio, name="agregar_municipio"),
-    path("gestion_municipios/edicionMunicipio/<int:municipio_id>/", views.editar_municipio, name="editar_municipio"),
     path(
         "gestion_municipios/eliminarMunicipio/<int:id>",
         views.eliminar_municipio,
@@ -31,7 +30,6 @@ urlpatterns = [
     ),
     path("gestion_proyectos/", views.gestion_proyectos, name="gestion_proyectos"),
     path("agregar_proyecto/", views.agregar_proyecto, name="agregar_proyecto"),
-    path("gestion_proyectos/edit_proyecto/<int:proyecto_id>/", views.editar_proyecto, name="editar_proyecto"),
     path(
         "gestion_proyectos/eliminarProyecto/<int:id>",
         views.eliminar_proyecto,
