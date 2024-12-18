@@ -1,15 +1,119 @@
 {% extends "./index.html" %}
 
-{% block title %} Edición {% endblock %}
+{% block title %} Edición de Persona {% endblock %}
 
 {% block body %}
-<div class="row">
-    <div class="col-md-4 offset-md-4">
-        <h2>Edición de datos</h2>
-        <div class="card">
-            <div class="card-body">
-                
-            </div>
+<div class="container mt-2 col-lg-6 col-md-8">
+    <h2 class="mb-3">Editar Persona</h2>
+    <div class="card">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input
+                        type="text"
+                        id="txtNombre"
+                        name="nombre"
+                        value="{{ persona.nombre }}"
+                        class="form-control"
+                        placeholder="Nombre"
+                        maxlength="45"
+                        required />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="number"
+                        id="txtTelefono"
+                        name="telefono"
+                        value="{{ persona.telefono }}"
+                        class="form-control"
+                        placeholder="Teléfono"
+                        min="1000000000"
+                        max="9999999999" />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="number"
+                        id="numEdad"
+                        name="edad"
+                        value="{{ persona.edad }}"
+                        class="form-control"
+                        placeholder="Edad"
+                        min="0"
+                        max="120"
+                        required />
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selSexo"
+                        name="sexo"
+                        class="form-control"
+                        required>
+                        <option value="" disabled>
+                            Seleccione el sexo
+                        </option>
+                        <option value="H" {% if persona.sexo == "H" %} selected {% endif %}>Hombre</option>
+                        <option value="M" {% if persona.sexo == "M" %} selected {% endif %}>Mujer</option>
+                        <option value="O" {% if persona.sexo == "O" %} selected {% endif %}>Otro</option>
+                        <option value="N" {% if persona.sexo == "N" %} selected {% endif %}>Prefiero no responder</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input
+                        type="number"
+                        id="numAhorros"
+                        name="ahorros"
+                        value="{{ persona.ahorros }}"
+                        class="form-control"
+                        placeholder="Ahorros"
+                        min="0"
+                        step="0.01" />
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selVivienda"
+                        name="vivienda_residencial"
+                        class="form-control">
+                        <option value="" disabled selected>
+                            Seleccione la vivienda
+                        </option>
+                        {% for vivienda in viviendas %}
+                        <option value="{{ vivienda.id }}" {% if persona.vivienda_residencial == vivienda.id %} selected {% endif %}>
+                            {{ vivienda.direccion }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selCabezaFamilia"
+                        name="cabeza_de_familia"
+                        class="form-control">
+                        <option value="" {% if not persona.cabeza_de_familia %} selected {% endif %}>
+                            Seleccione una cabeza de familia
+                        </option>
+                        {% for otra_persona in personas %}
+                            <option value="{{ otra_persona.id }}" {% if persona.cabeza_de_familia == otra_persona.id %} selected {% endif %}>
+                                {{ otra_persona.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="justify-content-center form-group d-flex mt-4">
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-block text-white"
+                        style="width: 200px">
+                        Guardar
+                    </button>
+                </div>
+                {% if success == True %}
+                    <h2 style="color: greenyellow">Se ha guardado correctamente</h2>
+                {% elif success == False %}
+                    <h2 style="color: crimson">No se pudo guardar en la base de datos</h2>
+                    <p>{{ error }}</p>
+                {% endif %}
+            </form>
         </div>
     </div>
 </div>

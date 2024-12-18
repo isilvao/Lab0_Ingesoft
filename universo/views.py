@@ -15,7 +15,8 @@ from universo.validations import (
     validateProyecto,
     validateEvento,
 )
-
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render, get_object_or_404
 
 def index(request):
     return render(request, "home.html")
@@ -75,6 +76,66 @@ def gestion_personas(request):
     personas = Persona.objects.all()
 
     return render(request, "gestionPersonas.html", {"personas": personas})
+
+@csrf_exempt
+def editar_persona(request, persona_id):
+    persona = get_object_or_404(Persona, id=persona_id)  # Busca la persona o devuelve 404
+
+    if request.method == "POST":
+        # Validaciones
+        resultado, respuesta = validatePersona(request)
+
+        if resultado:
+            try:
+                # Actualizar campos existentes con los datos validados
+                persona.nombre = respuesta.nombre
+                persona.telefono = respuesta.telefono
+                persona.edad = respuesta.edad
+                persona.sexo = respuesta.sexo
+                persona.ahorros = respuesta.ahorros
+                persona.vivienda_residencial = respuesta.vivienda_residencial
+                persona.cabeza_de_familia = respuesta.cabeza_de_familia
+                persona.save()
+            except Exception as e:
+                return render(
+                    request,
+                    "edicionPersona.html",
+                    {"success": False, "error": str(e)},
+                    status=400,
+                )
+            return render(request, "edicionPersona.html", {"success": True})
+
+        else:
+            return render(
+                request,
+                "edicionPersona.html",
+                {"success": False, "error": respuesta},
+                status=400,
+            )
+        
+    personas = Persona.objects.all()
+    viviendas = Vivienda.objects.all()
+
+    # En caso de GET, se envÃ­an los datos actuales de la persona
+    return render(
+        request,
+        #cambiar esto
+        "edicionPersona.html",
+        {
+            "success": None,
+            "persona": {
+                "id": persona.id,
+                "nombre": persona.nombre,
+                "telefono": persona.telefono,
+                "edad": persona.edad,
+                "sexo": persona.sexo,
+                "ahorros": persona.ahorros,
+                "vivienda_residencial": persona.vivienda_residencial.id if persona.vivienda_residencial else None,
+                "cabeza_de_familia": persona.cabeza_de_familia.id if persona.cabeza_de_familia else None,
+            },
+            "personas": personas, "viviendas": viviendas,
+        },
+    )
 
 
 # VIVIENDAS
