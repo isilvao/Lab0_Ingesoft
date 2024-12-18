@@ -49,8 +49,8 @@
                         <option value="" disabled selected>
                             Seleccione el sexo
                         </option>
-                        <option value="M">Masculino</option>
-                        <option value="F">Femenino</option>
+                        <option value="H">Hombre</option>
+                        <option value="M">Mujer</option>
                         <option value="O">Otro</option>
                         <option value="N">Prefiero no responder</option>
                     </select>
@@ -106,7 +106,10 @@
                     </button>
                 </div>
                 {% if success == True %}
-                <h2 style="color: greenyellow">Se ha guardado correctamente</h2>
+                    <h2 style="color: greenyellow">Se ha guardado correctamente</h2>
+                {% elif success == False %}
+                    <h2 style="color: crimson">No se pudo guardar en la base de datos</h2>
+                    <p>{{ error }}</p>
                 {% endif %}
             </form>
         </div>
