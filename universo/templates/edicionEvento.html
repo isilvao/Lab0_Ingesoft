@@ -1,0 +1,79 @@
+{% extends "./index.html" %}
+
+{% block title %} Edición de Evento {% endblock %}
+
+{% block body %}
+<div class="container mt-2 col-lg-6 col-md-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Editar Evento</h2>
+        <a href="/gestion_eventos/" class="btn btn-primary">Volver</a>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input
+                        type="text"
+                        id="txtNombre"
+                        name="nombre"
+                        value="{{ evento.nombre }}"
+                        class="form-control"
+                        placeholder="Nombre del evento"
+                        maxlength="255"
+                        required />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="text"
+                        id="txtDescripcion"
+                        name="descripcion"
+                        value="{{ evento.descripcion }}"
+                        class="form-control"
+                        placeholder="Descripción"
+                        maxlength="200"
+                        required />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="date"
+                        id="fechaInicio"
+                        name="fecha_inicio"
+                        value="{{ evento.fecha_inicio }}"
+                        class="form-control"
+                        placeholder="Fecha de inicio" />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="date"
+                        id="fechaFin"
+                        name="fecha_fin"
+                        value="{{ evento.fecha_fin }}"
+                        class="form-control"
+                        placeholder="Fecha de finalización" />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="number"
+                        id="numAforo"
+                        name="aforo"
+                        value="{{ evento.aforo }}"
+                        class="form-control"
+                        placeholder="Aforo máximo"
+                        min="0"
+                        step="1"
+                        required />
+                </div>
+                <div class="justify-content-center form-group d-flex mt-4">
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-block text-white"
+                        style="width: 200px">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
