@@ -9,19 +9,19 @@ from universo.models import (
 )
 
 
-def validatePersona(request):
+def validatePersona(request, personas):
     nombre = request.POST["nombre"]
     telefono = request.POST["telefono"]
     edad = request.POST["edad"]
     sexo = request.POST["sexo"]
     ahorros = request.POST["ahorros"]
     vivienda = (
-        int(request.POST["vivienda_residencial"])
+        request.POST["vivienda_residencial"]
         if "vivienda_residencial" in request.POST
         else None
     )
     cabezaFamilia = (
-        int(request.POST["cabeza_de_familia"])
+        request.POST["cabeza_de_familia"]
         if "cabeza_de_familia" in request.POST
         else None
     )
@@ -37,6 +37,12 @@ def validatePersona(request):
             vivienda = None
         else:
             vivienda = Vivienda.objects.get(pk=vivienda)
+
+            resultado, respuesta = maximoPersonasVivienda(vivienda, personas)
+
+            if not resultado:
+                return False, respuesta
+
     if cabezaFamilia == "":
         cabezaFamilia = None
     else:
@@ -299,3 +305,19 @@ def validateEvento(request):
     respuesta = (evento, evento_municipio)
 
     return True, respuesta
+
+
+def maximoPersonasVivienda(vivienda, personas):
+
+    cantidad_persoans = 0
+
+    for persona in personas:
+        if persona.vivienda_residencial == vivienda:
+            cantidad_persoans += 1
+
+    print("Cantidad de personas en la vivienda", cantidad_persoans)
+
+    if cantidad_persoans >= vivienda.capacidad:
+        return False, "La vivienda ya tiene el máximo de personas permitidas"
+
+    return True, None

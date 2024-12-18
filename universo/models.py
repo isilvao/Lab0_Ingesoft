@@ -82,14 +82,6 @@ class MunicipioEvento(models.Model):
         db_table = "MUNICIPIO_has_EVENTO"
 
 
-class PersonaEvento(models.Model):
-    persona = models.ForeignKey(Persona, on_delete=models.SET_NULL, null=True)
-    evento = models.ForeignKey(Evento, on_delete=models.SET_NULL, null=True)
-
-    class Meta:
-        db_table = "PERSONA_goes_EVENTO"
-
-
 class Proyecto(models.Model):
 
     state_choices = [
