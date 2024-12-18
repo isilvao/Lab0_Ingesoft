@@ -4,7 +4,10 @@
 
 {% block body %}
 <div class="container mt-2 col-lg-6 col-md-8">
-    <h2 class="mb-3">Editar Persona</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Editar Información</h2>
+        <a href="/gestion_personas/" class="btn btn-primary">Volver</a>
+    </div>
     <div class="card">
         <div class="card-body">
             <form method="POST">
@@ -107,12 +110,6 @@
                         Guardar
                     </button>
                 </div>
-                {% if success == True %}
-                    <h2 style="color: greenyellow">Se ha guardado correctamente</h2>
-                {% elif success == False %}
-                    <h2 style="color: crimson">No se pudo guardar en la base de datos</h2>
-                    <p>{{ error }}</p>
-                {% endif %}
             </form>
         </div>
     </div>
