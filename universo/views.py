@@ -17,6 +17,7 @@ from universo.validations import (
 )
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, get_object_or_404
+from django.contrib import messages
 
 def index(request):
     return render(request, "home.html")
@@ -26,6 +27,7 @@ def index(request):
 def eliminar_persona(request, id):
     persona = Persona.objects.get(id=id)
     persona.delete()
+    messages.success(request, 'Persona eliminada exitosamente.')
     return redirect("/gestion_personas/")
 
 
@@ -38,6 +40,7 @@ def agregar_persona(request):
         if resultado:
             try:
                 respuesta.save()
+                messages.success(request, 'Persona agregada exitosamente.')
             except Exception as e:
                 return render(
                     request,
@@ -49,7 +52,7 @@ def agregar_persona(request):
                     status=400,
                 )
             #
-            return render(request, "addPerson.html", {"success": True})
+            return redirect("/add_person/")
         else:
             return render(
                 request,
@@ -72,10 +75,9 @@ def agregar_persona(request):
 
 
 def gestion_personas(request):
-
     personas = Persona.objects.all()
-
-    return render(request, "gestionPersonas.html", {"personas": personas})
+    viviendas = Vivienda.objects.all()
+    return render(request, "gestionPersonas.html", {"personas": personas, "viviendas": viviendas})
 
 @csrf_exempt
 def editar_persona(request, persona_id):
@@ -103,7 +105,8 @@ def editar_persona(request, persona_id):
                     {"success": False, "error": str(e)},
                     status=400,
                 )
-            return render(request, "edicionPersona.html", {"success": True})
+            messages.success(request, 'Información editada exitosamente.')
+            return redirect("/gestion_personas/")
 
         else:
             return render(
@@ -147,8 +150,8 @@ def agregar_vivienda(request):
         if resultado:
             try:
                 respuesta.save()
+                messages.success(request, 'Vivienda agregada correctamente.')
             except Exception as e:
-                """
                 return render(
                     request,
                     "agregarVivienda.html",
@@ -158,12 +161,10 @@ def agregar_vivienda(request):
                     },
                     status=400,
                 )
-                """
-                return HttpResponse("Error: " + str(e))
-            # return render(request, "agregarVivienda.html", {"success": True})
-            return HttpResponse("Vivienda agregada correctamente")
+                # return HttpResponse("Error: " + str(e))
+            return render(request, "agregarVivienda.html", {"success": True})
+            # return HttpResponse("Vivienda agregada correctamente")
         else:
-            """
             return render(
                 request,
                 "agregarVivienda.html",
@@ -173,20 +174,20 @@ def agregar_vivienda(request):
                 },
                 status=400,
             )
-            """
-            return HttpResponse("Error: " + str(respuesta), status=400)
+
+            # return HttpResponse("Error: " + str(respuesta), status=400)
 
     personas = Persona.objects.all()
     municipios = Municipio.objects.all()
 
-    """
+    
     return render(
         request,
         "agregarVivienda.html",
         {"success": None, "personas": personas, "municipios": municipios},
     )
-    """
-    return HttpResponse("Viviendas: " + str(personas) + str(municipios))
+   
+    # return HttpResponse("Viviendas: " + str(personas) + str(municipios))
 
 
 def gestion_viviendas(request):

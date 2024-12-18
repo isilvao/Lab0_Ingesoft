@@ -1,0 +1,95 @@
+{% extends "./index.html" %} {% block title %} Agregar Vivienda {% endblock %} 
+{% block body %}
+<div class="container mt-2 col-lg-6 col-md-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Agregar Nueva Vivienda</h2>
+        <a href="/gestion_viviendas/" class="btn btn-primary">Volver</a>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input
+                        type="text"
+                        id="txtDireccion"
+                        name="direccion"
+                        class="form-control"
+                        placeholder="Dirección"
+                        maxlength="45"
+                        required />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="number"
+                        id="numCapacidad"
+                        name="capacidad"
+                        class="form-control"
+                        placeholder="Capacidad"
+                        min="1"
+                        required />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="number"
+                        id="numNiveles"
+                        name="niveles"
+                        class="form-control"
+                        placeholder="Niveles"
+                        min="1"
+                        required />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="number"
+                        id="numArea"
+                        name="area"
+                        class="form-control"
+                        placeholder="Área (m²)"
+                        min="0"
+                        step="0.01"
+                        required />
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selMunicipio"
+                        name="municipio"
+                        class="form-control">
+                        <option value="" disabled selected>
+                            Seleccione el municipio
+                        </option>
+                        {% for municipio in municipios %}
+                        <option value="{{ municipio.id }}">
+                            {{ municipio.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selPropietario"
+                        name="propietario"
+                        class="form-control">
+                        <option value="" disabled selected>
+                            Seleccione el propietario
+                        </option>
+                        {% for persona in personas %}
+                        <option value="{{ persona.id }}">
+                            {{ persona.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="justify-content-center form-group d-flex mt-4">
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-block text-white"
+                        style="width: 200px">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
