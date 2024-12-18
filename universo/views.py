@@ -490,7 +490,6 @@ def agregar_proyecto(request):
             try:
                 respuesta.save()
             except Exception as e:
-                """
                 return render(
                     request,
                     "agregarProyecto.html",
@@ -500,12 +499,10 @@ def agregar_proyecto(request):
                     },
                     status=400,
                 )
-                """
-                return HttpResponse("Error: " + str(e))
-            # return render(request, "agregarProyecto.html", {"success": True})
-            return HttpResponse("Proyecto agregado correctamente")
+                #return HttpResponse("Error: " + str(e))
+            return render(request, "agregarProyecto.html", {"success": True})
+            # return HttpResponse("Proyecto agregado correctamente")
         else:
-            """
             return render(
                 request,
                 "agregarProyecto.html",
@@ -515,20 +512,18 @@ def agregar_proyecto(request):
                 },
                 status=400,
             )
-            """
-            return HttpResponse("Error: " + str(respuesta), status=400)
+            #return HttpResponse("Error: " + str(respuesta), status=400)
 
     personas = Persona.objects.all()
     municipios = Municipio.objects.all()
 
-    """
     return render(
         request,
         "agregarProyecto.html",
         {"success": None, "personas": personas, "municipios": municipios},
     )
-    """
-    return HttpResponse("Proyectos: " + str(personas) + str(municipios))
+
+    #return HttpResponse("Proyectos: " + str(personas) + str(municipios))
 
 
 def gestion_proyectos(request):

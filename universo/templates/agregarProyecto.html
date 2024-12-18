@@ -1,0 +1,101 @@
+{% extends "./index.html" %} 
+{% block title %} Agregar Proyecto {% endblock %} 
+
+{% block body %}
+<div class="container mt-2 col-lg-6 col-md-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Agregar Nuevo Proyecto</h2>
+        <a href="/gestion_proyectos/" class="btn btn-primary">Volver</a>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input
+                        type="text"
+                        id="txtTitulo"
+                        name="titulo"
+                        class="form-control"
+                        placeholder="Título"
+                        maxlength="40"
+                        required />
+                </div>
+                <div class="form-group">
+                    <textarea
+                        id="txtDescripcion"
+                        name="descripcion"
+                        class="form-control"
+                        placeholder="Descripción"
+                        maxlength="500"
+                        rows="4"
+                        required></textarea>
+                </div>
+                <div class="form-group">
+                    <input
+                        type="number"
+                        id="numPresupuesto"
+                        name="presupuesto"
+                        class="form-control"
+                        placeholder="Presupuesto"
+                        min="0"
+                        step="0.01"
+                        required />
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selEstado"
+                        name="estado"
+                        class="form-control"
+                        required>
+                        <option value="" disabled selected>
+                            Seleccione el estado del proyecto
+                        </option>
+                        <option value="En proceso">En proceso</option>
+                        <option value="Finalizado">Finalizado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selMunicipio"
+                        name="municipio"
+                        class="form-control">
+                        <option value="" disabled selected>
+                            Seleccione el municipio
+                        </option>
+                        {% for municipio in municipios %}
+                        <option value="{{ municipio.id }}">
+                            {{ municipio.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selResponsable"
+                        name="responsable"
+                        class="form-control">
+                        <option value="" disabled selected>
+                            Seleccione el responsable
+                        </option>
+                        {% for persona in personas %}
+                        <option value="{{ persona.id }}">
+                            {{ persona.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="justify-content-center form-group d-flex mt-4">
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-block text-white"
+                        style="width: 200px">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
