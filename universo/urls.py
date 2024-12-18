@@ -10,8 +10,12 @@ urlpatterns = [
         views.eliminar_persona,
         name="eliminar_persona",
     ),
+    path("gestion_personas/edit_person/<int:persona_id>/", views.editar_persona, name="editar_persona"),
+
     path("gestion_viviendas/", views.gestion_viviendas, name="gestion_viviendas"),
     path("agregar_vivienda/", views.agregar_vivienda, name="agregar_vivienda"),
+    path("gestion_viviendas/edicionVivienda/<int:vivienda_id>/", views.editar_vivienda, name="editar_vivienda"),
+
     path(
         "gestion_viviendas/eliminarVivienda/<int:id>",
         views.eliminar_vivienda,

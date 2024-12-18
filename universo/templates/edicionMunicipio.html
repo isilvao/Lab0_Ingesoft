@@ -1,0 +1,74 @@
+{% extends "./index.html" %} {% block title %} Editar Municipio {% endblock %} 
+{% block body %}
+<div class="container mt-2 col-lg-6 col-md-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Editar Municipio</h2>
+        <a href="/gestion_municipios/" class="btn btn-primary">Volver</a>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input
+                        type="text"
+                        id="txtNombre"
+                        name="nombre"
+                        class="form-control"
+                        placeholder="Nombre"
+                        value="{{ municipio.nombre }}"
+                        maxlength="45"
+                        required />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="number"
+                        id="numArea"
+                        name="area"
+                        class="form-control"
+                        placeholder="Área (km²)"
+                        value="{{ municipio.area }}"
+                        min="0"
+                        step="0.01"
+                        required />
+                </div>
+                <div class="form-group">
+                    <input
+                        type="number"
+                        id="numPresupuesto"
+                        name="presupuesto"
+                        class="form-control"
+                        placeholder="Presupuesto"
+                        value="{{ municipio.presupuesto }}"
+                        min="0"
+                        step="0.01"
+                        required />
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selPersona"
+                        name="persona"
+                        class="form-control">
+                        <option value="" {% if not municipio.persona %} selected {% endif %}>
+                            Seleccione la persona encargada
+                        </option>
+                        {% for persona in personas %}
+                        <option value="{{ persona.id }}" {% if municipio.persona and municipio.persona.id == persona.id %} selected {% endif %}>
+                            {{ persona.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="justify-content-center form-group d-flex mt-4">
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-block text-white"
+                        style="width: 200px">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
