@@ -69,24 +69,6 @@ def gestion_personas(request):
     return render(request, "gestionPersonas.html", {"personas": personas})
 
 
-<<<<<<< HEAD
-def gestion_municipios(request):
-
-    # personas = Persona.objects.all()
-
-    # for persona in personas:
-    #     print(persona.cabeza_de_familia)
-
-    return render(request, "gestionMunicipios.html")
-
-
-def gestion_viviendas(request):
-    viviendas = Vivienda.objects.all()
-    return render(request, "gestionViviendas.html", {"viviendas": viviendas})
-
-
-=======
->>>>>>> Gabriel
 # VIVIENDAS
 def agregar_vivienda(request):
     if request.method == "POST":
@@ -137,8 +119,6 @@ def agregar_vivienda(request):
     """
     return HttpResponse("Viviendas: " + str(personas) + str(municipios))
 
-<<<<<<< HEAD
-=======
 
 def gestion_viviendas(request):
     viviendas = Vivienda.objects.all()
@@ -151,7 +131,6 @@ def eliminar_vivienda(request, id):
     return redirect("/gestion_viviendas/")
 
 
->>>>>>> Gabriel
 # MUNICIPIOS
 def agregar_municipio(request):
     if request.method == "POST":
