@@ -31,6 +31,7 @@ urlpatterns = [
     ),
     path("gestion_proyectos/", views.gestion_proyectos, name="gestion_proyectos"),
     path("agregar_proyecto/", views.agregar_proyecto, name="agregar_proyecto"),
+    path("gestion_proyectos/edit_proyecto/<int:proyecto_id>/", views.editar_proyecto, name="editar_proyecto"),
     path(
         "gestion_proyectos/eliminarProyecto/<int:id>",
         views.eliminar_proyecto,
