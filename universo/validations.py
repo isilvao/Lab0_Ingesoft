@@ -199,7 +199,6 @@ def validateMunicipio(request):
     return True, municipio
 
 
-
 def validateMunicipioParaEditar(request, municipio_id):
     nombre = request.POST["nombre"]
     area = request.POST["area"]
@@ -227,7 +226,10 @@ def validateMunicipioParaEditar(request, municipio_id):
     if nombre == "":
         return False, "El nombre es obligatorio"
     else:
-        if nombre != municipio_original.nombre and Municipio.objects.filter(nombre=nombre).exists():
+        if (
+            nombre != municipio_original.nombre
+            and Municipio.objects.filter(nombre=nombre).exists()
+        ):
             return False, "Ya existe un municipio con ese nombre"
 
     # Validar presupuesto
@@ -257,6 +259,7 @@ def validateMunicipioParaEditar(request, municipio_id):
     )
 
     return True, municipio
+
 
 def validateProyecto(request):
     titulo = request.POST["titulo"]
