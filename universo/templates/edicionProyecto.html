@@ -64,11 +64,11 @@
                         id="selMunicipio"
                         name="municipio"
                         class="form-control">
-                        <option value="" disabled>
+                        <option value="" disabled {% if not proyecto.municipio %} selected {% endif %}>
                             Seleccione el municipio
                         </option>
                         {% for municipio in municipios %}
-                        <option value="{{ municipio.id }}" {% if proyecto.municipio and proyecto.municipio.id == municipio.id %} selected {% endif %}>
+                        <option value="{{ municipio.id }}" {% if proyecto.municipio == municipio.id %} selected {% endif %}>
                             {{ municipio.nombre }}
                         </option>
                         {% endfor %}
@@ -83,7 +83,7 @@
                             Seleccione el responsable
                         </option>
                         {% for persona in personas %}
-                        <option value="{{ persona.id }}" {% if proyecto.responsable and proyecto.responsable.id == persona.id %} selected {% endif %}>
+                        <option value="{{ persona.id }}" {% if proyecto.responsable == persona.id %} selected {% endif %}>
                             {{ persona.nombre }}
                         </option>
                         {% endfor %}

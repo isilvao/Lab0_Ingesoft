@@ -66,7 +66,7 @@
                             Seleccione el municipio
                         </option>
                         {% for municipio in municipios %}
-                        <option value="{{ municipio.id }}" {% if vivienda.municipio and vivienda.municipio.id == municipio.id %} selected {% endif %}>
+                        <option value="{{ municipio.id }}" {% if vivienda.municipio == municipio.id %} selected {% endif %}>
                             {{ municipio.nombre }}
                         </option>
                         {% endfor %}
@@ -81,7 +81,7 @@
                             Seleccione el propietario
                         </option>
                         {% for persona in personas %}
-                        <option value="{{ persona.id }}" {% if vivienda.propietario and vivienda.propietario.id == persona.id %} selected {% endif %}>
+                        <option value="{{ persona.id }}" {% if vivienda.propietario == persona.id %} selected {% endif %}>
                             {{ persona.nombre }}
                         </option>
                         {% endfor %}

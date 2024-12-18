@@ -53,7 +53,7 @@
                             Seleccione la persona encargada
                         </option>
                         {% for persona in personas %}
-                        <option value="{{ persona.id }}" {% if municipio.persona and municipio.persona.id == persona.id %} selected {% endif %}>
+                        <option value="{{ persona.id }}" {% if municipio.persona == persona.id %} selected {% endif %}>
                             {{ persona.nombre }}
                         </option>
                         {% endfor %}
