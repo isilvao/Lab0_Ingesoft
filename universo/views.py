@@ -181,6 +181,8 @@ def editar_persona(request, persona_id):
 # VIVIENDAS
 def agregar_vivienda(request):
     if request.method == "POST":
+        personas = Persona.objects.all()
+        municipios = Municipio.objects.all()
 
         resultado, respuesta = validateVivienda(request)
 
@@ -189,17 +191,23 @@ def agregar_vivienda(request):
                 respuesta.save()
                 messages.success(request, 'Vivienda agregada correctamente.')
             except Exception as e:
+                # return render(
+                #     request,
+                #     "agregarVivienda.html",
+                #     {
+                #         "success": False,
+                #         "error": respuesta,
+                #     },
+                #     status=400,
+                    
+                # )
                 return render(
-                    request,
-                    "agregarVivienda.html",
-                    {
-                        "success": False,
-                        "error": respuesta,
-                    },
-                    status=400,
-                )
+                        request,
+                        "agregarVivienda.html",
+                        {"success": None, "personas": personas, "municipios": municipios,"error": respuesta,},status=400,
+                    )
                 # return HttpResponse("Error: " + str(e))
-            return render(request, "agregarVivienda.html", {"success": True})
+            return render(request, "agregarVivienda.html", {"success": True, "personas": personas, "municipios": municipios})
             # return HttpResponse("Vivienda agregada correctamente")
         else:
             return render(
