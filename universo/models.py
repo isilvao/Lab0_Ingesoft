@@ -3,8 +3,8 @@ from django.db import models
 
 class Persona(models.Model):
     choices_sexo = [
-        ("M", "Masculino"),
-        ("F", "Femenino"),
+        ("H", "Hombre"),
+        ("M", "Mujer"),
         ("O", "Otro"),
         ("N", "Prefiero no responder"),
     ]
@@ -31,8 +31,8 @@ class Persona(models.Model):
 
 class Municipio(models.Model):
     nombre = models.CharField(max_length=45)
-    area = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2)
-    presupuesto = models.TextField(null=True, blank=True)
+    area = models.DecimalField(max_digits=10, decimal_places=2)
+    presupuesto = models.DecimalField(max_digits=20, decimal_places=2)
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -45,12 +45,16 @@ class Municipio(models.Model):
 class Vivienda(models.Model):
     direccion = models.CharField(max_length=45)
     capacidad = models.BigIntegerField()
-    niveles = models.BigIntegerField(null=True, blank=True)
-    area = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2)
-    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE)
+    niveles = models.BigIntegerField()
+    area = models.DecimalField(max_digits=10, decimal_places=2)
+    municipio = models.ForeignKey(
+        Municipio, on_delete=models.CASCADE, null=True, blank=True
+    )
     propietario = models.ForeignKey(
         Persona,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     class Meta:

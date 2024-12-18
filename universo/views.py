@@ -1,97 +1,51 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from universo.models import Persona, Vivienda
+from universo.models import Persona, Vivienda, Municipio
+from universo.validations import validatePersona, validateVivienda, validateMunicipio
 
 
 def index(request):
     return render(request, "gestionPersonas.html")
 
 
+# PERSONAS
 def eliminar_persona(request, id):
     persona = Persona.objects.get(id=id)
     persona.delete()
     return redirect("/gestion_personas/")
 
 
-def addPerson(request):
+def agregar_persona(request):
     if request.method == "POST":
-        # Lógica para procesar el formulario
-        nombre = request.POST["nombre"]
-        telefono = request.POST["telefono"]
-        edad = request.POST["edad"]
-        sexo = request.POST["sexo"]
-        ahorros = request.POST["ahorros"]
-        vivienda_residencial = (
-            int(request.POST["vivienda_residencial"])
-            if "vivienda_residencial" in request.POST
-            else None
-        )
-        cabeza_de_familia = int(request.POST["cabeza_de_familia"])
-
-        if ahorros == "":
-            ahorros = 0.0
-        if telefono == "":
-            telefono = None
-        if vivienda_residencial == "":
-            vivienda_residencial = None
-        else:
-            if not Vivienda.objects.filter(pk=vivienda_residencial).exists():
-                vivienda_residencial = None
-            else:
-                vivienda_residencial = Vivienda.objects.get(pk=vivienda_residencial)
-        if cabeza_de_familia == "":
-            cabeza_de_familia = None
-
-        try:
-            edad = int(edad)
-        except ValueError:
-            return HttpResponse("La edad debe ser un número")
-
-        try:
-            ahorros = float(ahorros)
-        except ValueError:
-            return HttpResponse("Los ahorros deben ser un número decimal")
-
-        if telefono:
-            try:
-                telefono = int(telefono)
-            except ValueError:
-                return HttpResponse("El teléfono debe ser un número")
 
         # Validaciones
-        if not nombre:
-            return HttpResponse("El nombre es requerido")
-        if not edad:
-            return HttpResponse("La edad es requerida")
-        if not sexo:
-            return HttpResponse("El sexo es requerido")
+        resultado, respuesta = validatePersona(request)
 
-        if edad < 0 or edad > 150:
-            return HttpResponse("La edad debe ser un número entre 0 y 150")
-        if sexo not in ["M", "F", "O", "N"]:
-            return HttpResponse(
-                "El sexo debe ser Masculino, Femenino, Otro o Prefiero no reponder"
+        if resultado:
+            try:
+                respuesta.save()
+            except Exception as e:
+                return render(
+                    request,
+                    "addPerson.html",
+                    {
+                        "success": False,
+                        "error": e,
+                    },
+                    status=400,
+                )
+            #
+            return render(request, "addPerson.html", {"success": True})
+        else:
+            return render(
+                request,
+                "addPerson.html",
+                {
+                    "success": False,
+                    "error": respuesta,
+                },
+                status=400,
             )
-        if ahorros and ahorros < 0:
-            return HttpResponse("Los ahorros deben ser un número positivo")
-
-        # Procesar los datos
-        persona = Persona(
-            nombre=nombre,
-            telefono=telefono,
-            edad=edad,
-            sexo=sexo,
-            ahorros=ahorros,
-            vivienda_residencial=vivienda_residencial,
-            cabeza_de_familia=Persona.objects.get(pk=cabeza_de_familia),
-        )
-
-        try:
-            persona.save()
-        except Exception as e:
-            return HttpResponse(f"Error: {e}")
-        #
-        return render(request, "addPerson.html", {"success": True})
 
     personas = Persona.objects.all()
     viviendas = Vivienda.objects.all()
@@ -99,7 +53,7 @@ def addPerson(request):
     return render(
         request,
         "addPerson.html",
-        {"success": False, "personas": personas, "viviendas": viviendas},
+        {"success": None, "personas": personas, "viviendas": viviendas},
     )
 
 
@@ -107,7 +61,110 @@ def gestion_personas(request):
 
     personas = Persona.objects.all()
 
-    for persona in personas:
-        print(persona.cabeza_de_familia)
-
     return render(request, "gestionPersonas.html", {"personas": personas})
+
+
+# VIVIENDAS
+def agregar_vivienda(request):
+    if request.method == "POST":
+
+        resultado, respuesta = validateVivienda(request)
+
+        if resultado:
+            try:
+                respuesta.save()
+            except Exception as e:
+                """
+                return render(
+                    request,
+                    "agregarVivienda.html",
+                    {
+                        "success": False,
+                        "error": respuesta,
+                    },
+                    status=400,
+                )
+                """
+                return HttpResponse("Error: " + str(e))
+            # return render(request, "agregarVivienda.html", {"success": True})
+            return HttpResponse("Vivienda agregada correctamente")
+        else:
+            """
+            return render(
+                request,
+                "agregarVivienda.html",
+                {
+                    "success": False,
+                    "error": respuesta,
+                },
+                status=400,
+            )
+            """
+            return HttpResponse("Error: " + str(respuesta), status=400)
+
+    personas = Persona.objects.all()
+    municipios = Municipio.objects.all()
+
+    """
+    return render(
+        request,
+        "agregarVivienda.html",
+        {"success": None, "personas": personas, "municipios": municipios},
+    )
+    """
+    return HttpResponse("Viviendas: " + str(personas) + str(municipios))
+
+
+def gestion_viviendas(request):
+    viviendas = Vivienda.objects.all()
+    return render(request, "gestionViviendas.html", {"viviendas": viviendas})
+
+
+# MUNICIPIOS
+def agregar_municipio(request):
+    if request.method == "POST":
+
+        resultado, respuesta = validateMunicipio(request)
+
+        if resultado:
+            try:
+                respuesta.save()
+            except Exception as e:
+                """
+                return render(
+                    request,
+                    "agregarMunicipio.html",
+                    {
+                        "success": False,
+                        "error": respuesta,
+                    },
+                    status=400,
+                )
+                """
+                return HttpResponse("Error: " + str(e))
+            # return render(request, "agregarMunicipio.html", {"success": True})
+            return HttpResponse("Municipio agregado correctamente")
+        else:
+            """
+            return render(
+                request,
+                "agregarMunicipio.html",
+                {
+                    "success": False,
+                    "error": respuesta,
+                },
+                status=400,
+            )
+            """
+            return HttpResponse("Error: " + str(respuesta), status=400)
+
+    personas = Persona.objects.all()
+
+    """
+    return render(
+        request,
+        "agregarMunicipio.html",
+        {"success": None, "personas": personas},
+    )
+    """
+    return HttpResponse("Municipios: " + str(personas))
