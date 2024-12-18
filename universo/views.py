@@ -35,6 +35,10 @@ def agregar_persona(request):
         # Validaciones
         resultado, respuesta = validatePersona(request)
 
+        personas = Persona.objects.all()
+        viviendas = Vivienda.objects.all()
+
+
         if resultado:
             try:
                 respuesta.save()
@@ -45,11 +49,17 @@ def agregar_persona(request):
                     {
                         "success": False,
                         "error": e,
+                        "personas": personas, "viviendas": viviendas
                     },
                     status=400,
                 )
             #
-            return render(request, "addPerson.html", {"success": True})
+            #return render(request, "addPerson.html", {"success": True})
+            return render(
+                request,
+                "addPerson.html",
+                {"success": None, "personas": personas, "viviendas": viviendas},
+    )
         else:
             return render(
                 request,
@@ -57,13 +67,13 @@ def agregar_persona(request):
                 {
                     "success": False,
                     "error": respuesta,
+                    "personas": personas, "viviendas": viviendas
                 },
                 status=400,
             )
 
     personas = Persona.objects.all()
     viviendas = Vivienda.objects.all()
-
     return render(
         request,
         "addPerson.html",
@@ -81,6 +91,9 @@ def gestion_personas(request):
 def editar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)  # Busca la persona o devuelve 404
 
+    personas = Persona.objects.all()
+    viviendas = Vivienda.objects.all()
+
     if request.method == "POST":
         # Validaciones
         resultado, respuesta = validatePersona(request)
@@ -97,21 +110,66 @@ def editar_persona(request, persona_id):
                 persona.cabeza_de_familia = respuesta.cabeza_de_familia
                 persona.save()
             except Exception as e:
+                # return render(
+                #     request,
+                #     "edicionPersona.html",
+                #     {"success": False, "error": str(e)},
+                #     status=400,
+                # )
                 return render(
                     request,
+                    #cambiar esto
                     "edicionPersona.html",
-                    {"success": False, "error": str(e)},
-                    status=400,
+                    {
+                        "success": False,
+                        "error": str(e),
+                        
+                        "persona": {
+                            "id": persona.id,
+                            "nombre": persona.nombre,
+                            "telefono": persona.telefono,
+                            "edad": persona.edad,
+                            "sexo": persona.sexo,
+                            "ahorros": persona.ahorros,
+                            "vivienda_residencial": persona.vivienda_residencial.id if persona.vivienda_residencial else None,
+                            "cabeza_de_familia": persona.cabeza_de_familia.id if persona.cabeza_de_familia else None,
+                        },
+                        "personas": personas, "viviendas": viviendas,
+                    },
+                    status=400
                 )
-            return render(request, "edicionPersona.html", {"success": True})
+            # return render(request, "gestionPersonas.html", {"success": True})
+            return redirect("/gestion_personas/")
 
         else:
+            # return render(
+            #     request,
+            #     "edicionPersona.html",
+            #     {"success": False, "error": respuesta},
+            #     status=400,
+            # )
             return render(
-                request,
-                "edicionPersona.html",
-                {"success": False, "error": respuesta},
-                status=400,
-            )
+                    request,
+                    #cambiar esto
+                    "edicionPersona.html",
+                    {
+                        "success": False,
+                        "error": respuesta,
+                        
+                        "persona": {
+                            "id": persona.id,
+                            "nombre": persona.nombre,
+                            "telefono": persona.telefono,
+                            "edad": persona.edad,
+                            "sexo": persona.sexo,
+                            "ahorros": persona.ahorros,
+                            "vivienda_residencial": persona.vivienda_residencial.id if persona.vivienda_residencial else None,
+                            "cabeza_de_familia": persona.cabeza_de_familia.id if persona.cabeza_de_familia else None,
+                        },
+                        "personas": personas, "viviendas": viviendas,
+                    },
+                    status=400
+                )
         
     personas = Persona.objects.all()
     viviendas = Vivienda.objects.all()
