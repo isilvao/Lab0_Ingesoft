@@ -23,6 +23,7 @@ urlpatterns = [
     ),
     path("gestion_municipios/", views.gestion_municipios, name="gestion_municipios"),
     path("agregar_municipio/", views.agregar_municipio, name="agregar_municipio"),
+    path("gestion_municipios/edicionMunicipio/<int:municipio_id>/", views.editar_municipio, name="editar_municipio"),
     path(
         "gestion_municipios/eliminarMunicipio/<int:id>",
         views.eliminar_municipio,
