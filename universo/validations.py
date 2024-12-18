@@ -199,6 +199,65 @@ def validateMunicipio(request):
     return True, municipio
 
 
+
+def validateMunicipioParaEditar(request, municipio_id):
+    nombre = request.POST["nombre"]
+    area = request.POST["area"]
+    presupuesto = request.POST["presupuesto"]
+    persona = request.POST["persona"] if "persona" in request.POST else None
+
+    # Verificar que el municipio existe
+    try:
+        municipio_original = Municipio.objects.get(pk=municipio_id)
+    except Municipio.DoesNotExist:
+        return False, "El municipio no existe"
+
+    # Validar área
+    if area == "":
+        return False, "El área es obligatoria y debe ser un número positivo"
+    else:
+        try:
+            float(area)
+            if float(area) < 0:
+                return False, "El área debe ser un número positivo"
+        except ValueError:
+            return False, "El área debe ser un número decimal"
+
+    # Validar nombre
+    if nombre == "":
+        return False, "El nombre es obligatorio"
+    else:
+        if nombre != municipio_original.nombre and Municipio.objects.filter(nombre=nombre).exists():
+            return False, "Ya existe un municipio con ese nombre"
+
+    # Validar presupuesto
+    if presupuesto == "":
+        return False, "El presupuesto es obligatorio y debe ser un número positivo"
+    else:
+        try:
+            float(presupuesto)
+            if float(presupuesto) < 0:
+                return False, "El presupuesto debe ser un número positivo"
+        except ValueError:
+            return False, "El presupuesto debe ser un número decimal"
+
+    # Validar persona
+    if persona == "" or not Persona.objects.filter(pk=persona).exists():
+        return False, "Escoja una persona válida"
+    else:
+        persona = Persona.objects.get(pk=persona)
+
+    # Crear instancia con datos validados
+    municipio = Municipio(
+        id=municipio_id,  # Mantiene el ID original
+        nombre=nombre,
+        area=area,
+        presupuesto=presupuesto,
+        persona=persona,
+    )
+
+    return True, municipio
+
 def validateProyecto(request):
     titulo = request.POST["titulo"]
     descripcion = request.POST["descripcion"]
