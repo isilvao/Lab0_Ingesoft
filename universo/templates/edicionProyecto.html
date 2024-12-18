@@ -1,0 +1,104 @@
+{% extends "./index.html" %}
+
+{% block title %} Edición de Proyecto {% endblock %}
+
+{% block body %}
+<div class="container mt-2 col-lg-6 col-md-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Editar Proyecto</h2>
+        <a href="/gestion_proyectos/" class="btn btn-primary">Volver</a>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input
+                        type="text"
+                        id="txtTitulo"
+                        name="titulo"
+                        value="{{ proyecto.titulo }}"
+                        class="form-control"
+                        placeholder="Título"
+                        maxlength="40"
+                        required />
+                </div>
+                <div class="form-group">
+                    <textarea
+                        id="txtDescripcion"
+                        name="descripcion"
+                        class="form-control"
+                        placeholder="Descripción"
+                        maxlength="500"
+                        rows="4"
+                        required>{{ proyecto.descripcion }}</textarea>
+                </div>
+                <div class="form-group">
+                    <input
+                        type="number"
+                        id="numPresupuesto"
+                        name="presupuesto"
+                        value="{{ proyecto.presupuesto }}"
+                        class="form-control"
+                        placeholder="Presupuesto"
+                        min="0"
+                        step="0.01"
+                        required />
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selEstado"
+                        name="estado"
+                        class="form-control"
+                        required>
+                        <option value="" disabled>
+                            Seleccione el estado del proyecto
+                        </option>
+                        <option value="En proceso" {% if proyecto.estado == "En proceso" %} selected {% endif %}>En proceso</option>
+                        <option value="Finalizado" {% if proyecto.estado == "Finalizado" %} selected {% endif %}>Finalizado</option>
+                        <option value="Cancelado" {% if proyecto.estado == "Cancelado" %} selected {% endif %}>Cancelado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selMunicipio"
+                        name="municipio"
+                        class="form-control">
+                        <option value="" disabled>
+                            Seleccione el municipio
+                        </option>
+                        {% for municipio in municipios %}
+                        <option value="{{ municipio.id }}" {% if proyecto.municipio and proyecto.municipio.id == municipio.id %} selected {% endif %}>
+                            {{ municipio.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select
+                        id="selResponsable"
+                        name="responsable"
+                        class="form-control">
+                        <option value="" {% if not proyecto.responsable %} selected {% endif %}>
+                            Seleccione el responsable
+                        </option>
+                        {% for persona in personas %}
+                        <option value="{{ persona.id }}" {% if proyecto.responsable and proyecto.responsable.id == persona.id %} selected {% endif %}>
+                            {{ persona.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="justify-content-center form-group d-flex mt-4">
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-block text-white"
+                        style="width: 200px">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
