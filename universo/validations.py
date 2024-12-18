@@ -1,4 +1,4 @@
-from universo.models import Persona, Vivienda, Municipio
+from universo.models import Persona, Vivienda, Municipio, Proyecto, Evento
 
 
 def validatePersona(request):
@@ -161,10 +161,15 @@ def validateMunicipio(request):
         if Municipio.objects.filter(nombre=nombre).exists():
             return False, "Ya existe un municipio con ese nombre"
 
-    if presupuesto == "" or not presupuesto.isdigit() or float(presupuesto) < 0:
+    if presupuesto == "":
         return False, "El presupuesto es obligatorio y debe ser un número positivo"
     else:
-        presupuesto = float(presupuesto)
+        try:
+            float(presupuesto)
+            if float(presupuesto) < 0:
+                return False, "El presupuesto debe ser un número positivo"
+        except ValueError:
+            return False, "El presupuesto debe ser un número decimal"
 
     if persona == "" or not Persona.objects.filter(pk=persona).exists():
         return False, "Escoja una persona válida"
@@ -176,3 +181,60 @@ def validateMunicipio(request):
     )
 
     return True, municipio
+
+
+def validateProyecto(request):
+    titulo = request.POST["titulo"]
+    descripcion = request.POST["descripcion"]
+    presupuesto = request.POST["presupuesto"]
+    estado = request.POST["estado"]
+    municipio = request.POST["municipio"] if "municipio" in request.POST else None
+    persona_responsable = (
+        request.POST["responsable"] if "responsable" in request.POST else None
+    )
+
+    if titulo == "":
+        return False, "El título es obligatorio"
+    if descripcion == "":
+        return False, "La descripción es obligatoria"
+    if presupuesto == "":
+        return False, "El presupuesto es obligatorio y debe ser un número positivo"
+    else:
+        try:
+            float(presupuesto)
+            if float(presupuesto) < 0:
+                return False, "El presupuesto debe ser un número positivo"
+        except ValueError:
+            return False, "El presupuesto debe ser un número decimal"
+
+    if estado == "":
+        return False, "El estado es obligatorio"
+    if estado not in ["En proceso", "Finalizado", "Cancelado"]:
+        return (
+            False,
+            "El estado debe ser alguno entre 'En proceso', 'Finalizado' o 'Cancelado'",
+        )
+
+    if municipio == "" or not Municipio.objects.filter(pk=municipio).exists():
+        return False, "Escoja un municipio válido"
+    else:
+        municipio = Municipio.objects.get(pk=municipio)
+
+    if (
+        persona_responsable == ""
+        or not Persona.objects.filter(pk=persona_responsable).exists()
+    ):
+        return False, "Escoja una persona responsable válida"
+    else:
+        persona_responsable = Persona.objects.get(pk=persona_responsable)
+
+    proyecto = Proyecto(
+        titulo=titulo,
+        descripcion=descripcion,
+        presupuesto=presupuesto,
+        estado=estado,
+        municipio=municipio,
+        responsable=persona_responsable,
+    )
+
+    return True, proyecto
