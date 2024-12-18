@@ -7,6 +7,7 @@ from universo.models import (
     Municipio,
     Evento,
     MunicipioEvento,
+    PersonaEvento,
 )
 from universo.validations import (
     validatePersona,
@@ -551,3 +552,27 @@ def eliminar_evento(request, id):
     eventoMunicipio.delete()
     evento.delete()
     return redirect("/gestion_eventos/")
+
+
+# PERSONA goes EVENTO
+def persona_goes_evento(request):
+    if request.method == "POST":
+        persona_id = request.POST["persona"]
+        evento_id = request.POST["evento"]
+
+        persona = Persona.objects.get(id=persona_id)
+        evento = Evento.objects.get(id=evento_id)
+
+        personaEvento = PersonaEvento(persona=persona, evento=evento)
+        personaEvento.save()
+
+        return redirect("/gestion_eventos/")
+
+    personas = Persona.objects.all()
+    eventos = Evento.objects.all()
+
+    return render(
+        request,
+        "personaGoesEvento.html",
+        {"personas": personas, "eventos": eventos},
+    )
