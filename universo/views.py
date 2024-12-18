@@ -687,38 +687,45 @@ def eliminar_proyecto(request, id):
 
 
 # EVENTOS
-def agregar_evento(request):
+def agregar_evento(request, municipio_id):
     if request.method == "POST":
 
-        resultado, respuesta = validateEvento(request)
+        resultado, respuesta = validateEvento(request, municipio_id)
 
         if resultado:
             try:
                 respuesta[0].save()
                 respuesta[1].save()
-                messages.success(request, "Evento agregado correctamente.")
             except Exception as e:
-
+                messages.error(request, respuesta)
                 return render(
                     request,
                     "agregarEvento.html",
                     {
                         "success": False,
                         "error": respuesta,
+                        "municipio_id": municipio_id,
                     },
                     status=400,
                 )
 
                 # return HttpResponse("Error: " + str(e))
-            return render(request, "agregarEvento.html", {"success": True})
+            messages.success(request, "Evento agregado correctamente.")
+            return render(
+                request,
+                "agregarEvento.html",
+                {"success": True, "municipio_id": municipio_id},
+            )
             # return HttpResponse("Evento agregado correctamente")
         else:
+            messages.error(request, respuesta)
             return render(
                 request,
                 "agregarEvento.html",
                 {
                     "success": False,
                     "error": respuesta,
+                    "municipio_id": municipio_id,
                 },
                 status=400,
             )
@@ -730,29 +737,113 @@ def agregar_evento(request):
     return render(
         request,
         "agregarEvento.html",
-        {"success": None, "municipios": municipios},
+        {"success": None, "municipios": municipios, "municipio_id": municipio_id},
     )
 
     # return HttpResponse("Eventos: " + str(municipios))
 
 
-def gestion_eventos(request):
+def gestion_eventos(request, municipio_id):
     eventos = Evento.objects.all()
 
-    resultados = MunicipioEvento.objects.select_related("municipio", "evento")
+    resultados = MunicipioEvento.objects.filter(municipio=municipio_id)
+
+    eventosEnMunicipio = []
 
     for resultado in resultados:
-        print(
-            f"Evento: {resultado.evento.nombre}, Municipio: {resultado.municipio.nombre}"
-        )
+        eventosEnMunicipio.append(resultado.evento)
 
-    return render(request, "gestionEventos.html", {"eventos": eventos})
+    print(eventosEnMunicipio)
+
+    return render(
+        request,
+        "gestionEventos.html",
+        {"eventos": eventosEnMunicipio, "municipio_id": municipio_id},
+    )
 
 
-def eliminar_evento(request, id):
+def eliminar_evento(request, municipio_id, id):
     evento = Evento.objects.get(id=id)
     eventoMunicipio = MunicipioEvento.objects.get(evento=evento)
     eventoMunicipio.delete()
     evento.delete()
     messages.success(request, "Evento eliminado exitosamente.")
-    return redirect("/gestion_eventos/")
+    return redirect(f"/gestion_eventos/{municipio_id}/")
+
+
+@csrf_exempt
+def editar_evento(request, municipio_id, id):
+    evento = get_object_or_404(Proyecto, id=id)  # Busca el proyecto o devuelve 404
+
+    if request.method == "POST":
+        # Validar datos del formulario
+        resultado, respuesta = validateEvento(request)
+
+        if resultado:
+            try:
+                # Actualizar campos existentes con los datos validados
+                evento.nombre = respuesta.nombre
+                evento.descripcion = respuesta.descripcion
+                evento.fecha_inicio = respuesta.fecha_inicio
+                evento.fecha_fin = respuesta.fecha_fin
+                evento.aforo = respuesta.aforo
+                evento.save()
+            except Exception as e:
+                return render(
+                    request,
+                    "edicionEvento.html",
+                    {
+                        "success": False,
+                        "error": str(e),
+                        "proyecto": {
+                            "id": evento.id,
+                            "nombre": evento.nombre,
+                            "descripcion": evento.descripcion,
+                            "fecha_inicio": evento.fecha_inicio,
+                            "fecha_fin": evento.fecha_fin,
+                            "aforo": evento.aforo,
+                        },
+                        "municipio_id": municipio_id,
+                    },
+                    status=400,
+                )
+            messages.success(request, "Información del proyecto editada exitosamente.")
+            return redirect(f"/gestion_proyectos/{municipio_id}")
+
+        else:
+            return render(
+                request,
+                "edicionEvento.html",
+                {
+                    "success": False,
+                    "error": respuesta,
+                    "proyecto": {
+                        "id": evento.id,
+                        "nombre": evento.nombre,
+                        "descripcion": evento.descripcion,
+                        "fecha_inicio": evento.fecha_inicio,
+                        "fecha_fin": evento.fecha_fin,
+                        "aforo": evento.aforo,
+                    },
+                    "municipio_id": municipio_id,
+                },
+                status=400,
+            )
+
+    # En caso de GET, se envían los datos actuales del proyecto
+    return render(
+        request,
+        "edicionEvento.html",
+        {
+            "success": None,
+            "proyecto": {
+                "id": evento.id,
+                "nombre": evento.nombre,
+                "descripcion": evento.descripcion,
+                "fecha_inicio": evento.fecha_inicio,
+                "fecha_fin": evento.fecha_fin,
+                "aforo": evento.aforo,
+            },
+            "municipio_id": municipio_id,
+        },
+    )

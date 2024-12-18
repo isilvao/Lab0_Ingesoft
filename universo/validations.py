@@ -318,13 +318,13 @@ def validateProyecto(request):
     return True, proyecto
 
 
-def validateEvento(request):
+def validateEvento(request, municipio_id):
     nombre = request.POST["nombre"]
     descripcion = request.POST["descripcion"]
     fecha_inicio = request.POST["fecha_inicio"]
     fecha_fin = request.POST["fecha_fin"]
     aforo = request.POST["aforo"]
-    municipio = request.POST["municipio"] if "municipio" in request.POST else None
+    municipio = municipio_id
 
     if nombre == "":
         return False, "El nombre es obligatorio"

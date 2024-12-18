@@ -7,7 +7,7 @@
         <!-- botones separadps -->
         <div class="d-flex gap-3">
             <a href="/gestion_municipios/" class="btn btn-primary">Volver</a>
-            <a href="/agregar_evento/" class="btn btn-primary">Agregar Evento</a>
+            <a href="/agregar_evento/{{ municipio_id }}" class="btn btn-primary">Agregar Evento</a>
         </div>
         
     </div>
@@ -31,7 +31,6 @@
                     <td>{{ evento.fecha_inicio }}</td>
                     <td>{{ evento.fecha_fin }}</td>
                     <td>{{ evento.aforo }}</td>
-                    <td><a href="edit_evento/{{ evento.id }}" class="btn btn-info">Editar</a></td>
                     <td><a href="eliminarEvento/{{ evento.id }}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
                 </tr>
                 {% endfor %}
