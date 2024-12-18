@@ -96,9 +96,11 @@
                             Seleccione una cabeza de familia
                         </option>
                         {% for otra_persona in personas %}
-                            <option value="{{ otra_persona.id }}" {% if persona.cabeza_de_familia == otra_persona.id %} selected {% endif %}>
-                                {{ otra_persona.nombre }}
-                            </option>
+                            {% if not persona.id == otra_persona.id and otra_persona.cabeza_de_familia == None %}
+                                <option value="{{ otra_persona.id }}" {% if persona.cabeza_de_familia == otra_persona.id %} selected {% endif %}>
+                                    {{ otra_persona.nombre }}
+                                </option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                 </div>

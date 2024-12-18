@@ -44,7 +44,6 @@ def agregar_persona(request):
         if resultado:
             try:
                 respuesta.save()
-                messages.success(request, "Persona agregada exitosamente.")
             except Exception as e:
                 return render(
                     request,
@@ -57,9 +56,11 @@ def agregar_persona(request):
                     },
                     status=400,
                 )
-            #
+            messages.success(request, "Persona agregada exitosamente.")
             return redirect("/add_person/")
         else:
+
+            messages.error(request, respuesta)
             return render(
                 request,
                 "addPerson.html",
@@ -100,7 +101,7 @@ def editar_persona(request, persona_id):
 
     if request.method == "POST":
         # Validaciones
-        resultado, respuesta = validatePersona(request, personas)
+        resultado, respuesta = validatePersona(request, personas, persona_id)
 
         if resultado:
             try:
