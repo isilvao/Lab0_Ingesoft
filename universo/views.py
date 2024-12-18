@@ -37,6 +37,10 @@ def agregar_persona(request):
         # Validaciones
         resultado, respuesta = validatePersona(request)
 
+        personas = Persona.objects.all()
+        viviendas = Vivienda.objects.all()
+
+
         if resultado:
             try:
                 respuesta.save()
@@ -48,6 +52,7 @@ def agregar_persona(request):
                     {
                         "success": False,
                         "error": e,
+                        "personas": personas, "viviendas": viviendas
                     },
                     status=400,
                 )
@@ -60,13 +65,13 @@ def agregar_persona(request):
                 {
                     "success": False,
                     "error": respuesta,
+                    "personas": personas, "viviendas": viviendas
                 },
                 status=400,
             )
 
     personas = Persona.objects.all()
     viviendas = Vivienda.objects.all()
-
     return render(
         request,
         "addPerson.html",
@@ -82,6 +87,9 @@ def gestion_personas(request):
 @csrf_exempt
 def editar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)  # Busca la persona o devuelve 404
+
+    personas = Persona.objects.all()
+    viviendas = Vivienda.objects.all()
 
     if request.method == "POST":
         # Validaciones
@@ -99,8 +107,15 @@ def editar_persona(request, persona_id):
                 persona.cabeza_de_familia = respuesta.cabeza_de_familia
                 persona.save()
             except Exception as e:
+                # return render(
+                #     request,
+                #     "edicionPersona.html",
+                #     {"success": False, "error": str(e)},
+                #     status=400,
+                # )
                 return render(
                     request,
+                    #cambiar esto
                     "edicionPersona.html",
                     {"success": False, "error": str(e)},
                     status=400,
@@ -109,12 +124,34 @@ def editar_persona(request, persona_id):
             return redirect("/gestion_personas/")
 
         else:
+            # return render(
+            #     request,
+            #     "edicionPersona.html",
+            #     {"success": False, "error": respuesta},
+            #     status=400,
+            # )
             return render(
-                request,
-                "edicionPersona.html",
-                {"success": False, "error": respuesta},
-                status=400,
-            )
+                    request,
+                    #cambiar esto
+                    "edicionPersona.html",
+                    {
+                        "success": False,
+                        "error": respuesta,
+                        
+                        "persona": {
+                            "id": persona.id,
+                            "nombre": persona.nombre,
+                            "telefono": persona.telefono,
+                            "edad": persona.edad,
+                            "sexo": persona.sexo,
+                            "ahorros": persona.ahorros,
+                            "vivienda_residencial": persona.vivienda_residencial.id if persona.vivienda_residencial else None,
+                            "cabeza_de_familia": persona.cabeza_de_familia.id if persona.cabeza_de_familia else None,
+                        },
+                        "personas": personas, "viviendas": viviendas,
+                    },
+                    status=400
+                )
         
     personas = Persona.objects.all()
     viviendas = Vivienda.objects.all()
@@ -188,6 +225,92 @@ def agregar_vivienda(request):
     )
    
     # return HttpResponse("Viviendas: " + str(personas) + str(municipios))
+
+@csrf_exempt
+def editar_vivienda(request, vivienda_id):
+    vivienda = get_object_or_404(Vivienda, id=vivienda_id)  # Busca la vivienda o devuelve 404
+    personas = Persona.objects.all()
+    municipios = Municipio.objects.all()
+
+    if request.method == "POST":
+        # Validaciones
+        resultado, respuesta = validateVivienda(request)
+
+        if resultado:
+            try:
+                # Actualizar campos existentes con los datos validados
+                vivienda.direccion = respuesta.direccion
+                vivienda.capacidad = respuesta.capacidad
+                vivienda.niveles = respuesta.niveles
+                vivienda.area = respuesta.area
+                vivienda.municipio = respuesta.municipio
+                vivienda.propietario = respuesta.propietario
+                vivienda.save()
+            except Exception as e:
+                return render(
+                    request,
+                    "edicionVivienda.html",
+                    {
+                        "success": False,
+                        "error": str(e),
+                        "vivienda": {
+                            "id": vivienda.id,
+                            "direccion": vivienda.direccion,
+                            "capacidad": vivienda.capacidad,
+                            "niveles": vivienda.niveles,
+                            "area": vivienda.area,
+                            "municipio": vivienda.municipio.id if vivienda.municipio else None,
+                            "propietario": vivienda.propietario.id if vivienda.propietario else None,
+                        },
+                        "personas": personas,
+                        "municipios": municipios,
+                    },
+                    status=400,
+                )
+            messages.success(request, "Información editada exitosamente.")
+            return redirect("/gestion_viviendas/")
+
+        else:
+            return render(
+                request,
+                "edicionVivienda.html",
+                {
+                    "success": False,
+                    "error": respuesta,
+                    "vivienda": {
+                        "id": vivienda.id,
+                        "direccion": vivienda.direccion,
+                        "capacidad": vivienda.capacidad,
+                        "niveles": vivienda.niveles,
+                        "area": vivienda.area,
+                        "municipio": vivienda.municipio.id if vivienda.municipio else None,
+                        "propietario": vivienda.propietario.id if vivienda.propietario else None,
+                    },
+                    "personas": personas,
+                    "municipios": municipios,
+                },
+                status=400,
+            )
+
+    # En caso de GET, se envían los datos actuales de la vivienda
+    return render(
+        request,
+        "edicionVivienda.html",
+        {
+            "success": None,
+            "vivienda": {
+                "id": vivienda.id,
+                "direccion": vivienda.direccion,
+                "capacidad": vivienda.capacidad,
+                "niveles": vivienda.niveles,
+                "area": vivienda.area,
+                "municipio": vivienda.municipio.id if vivienda.municipio else None,
+                "propietario": vivienda.propietario.id if vivienda.propietario else None,
+            },
+            "personas": personas,
+            "municipios": municipios,
+        },
+    )
 
 
 def gestion_viviendas(request):
