@@ -14,6 +14,7 @@ from universo.validations import (
     validateMunicipio,
     validateProyecto,
     validateEvento,
+    validateMunicipioParaEditar
 )
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, get_object_or_404
@@ -181,6 +182,8 @@ def editar_persona(request, persona_id):
 # VIVIENDAS
 def agregar_vivienda(request):
     if request.method == "POST":
+        personas = Persona.objects.all()
+        municipios = Municipio.objects.all()
 
         resultado, respuesta = validateVivienda(request)
 
@@ -189,17 +192,23 @@ def agregar_vivienda(request):
                 respuesta.save()
                 messages.success(request, 'Vivienda agregada correctamente.')
             except Exception as e:
+                # return render(
+                #     request,
+                #     "agregarVivienda.html",
+                #     {
+                #         "success": False,
+                #         "error": respuesta,
+                #     },
+                #     status=400,
+                    
+                # )
                 return render(
-                    request,
-                    "agregarVivienda.html",
-                    {
-                        "success": False,
-                        "error": respuesta,
-                    },
-                    status=400,
-                )
+                        request,
+                        "agregarVivienda.html",
+                        {"success": None, "personas": personas, "municipios": municipios,"error": respuesta,},status=400,
+                    )
                 # return HttpResponse("Error: " + str(e))
-            return render(request, "agregarVivienda.html", {"success": True})
+            return render(request, "agregarVivienda.html", {"success": True, "personas": personas, "municipios": municipios})
             # return HttpResponse("Vivienda agregada correctamente")
         else:
             return render(
@@ -327,12 +336,15 @@ def eliminar_vivienda(request, id):
 # MUNICIPIOS
 def agregar_municipio(request):
     if request.method == "POST":
+        personas = Persona.objects.all()
+
 
         resultado, respuesta = validateMunicipio(request)
 
         if resultado:
             try:
                 respuesta.save()
+                messages.success(request, 'Municipio agregado correctamente.')
             except Exception as e:
                 """
                 return render(
@@ -346,7 +358,12 @@ def agregar_municipio(request):
                 )
                 """
                 # return HttpResponse("Error: " + str(e))
-            return render(request, "agregarMunicipio.html", {"success": True})
+            # return render(request, "agregarMunicipio.html", {"success": True})
+            return render(
+                request,
+                "agregarMunicipio.html",
+                {"success": True, "personas": personas},
+            )
             # return HttpResponse("Municipio agregado correctamente")
         else:
             
@@ -373,6 +390,82 @@ def agregar_municipio(request):
     
     # return HttpResponse("Municipios: " + str(personas))
 
+@csrf_exempt
+def editar_municipio(request, municipio_id):
+    municipio = get_object_or_404(Municipio, id=municipio_id)  # Busca el municipio o devuelve 404
+    personas = Persona.objects.all()  # Obtiene todas las personas (para el campo `persona`)
+
+    if request.method == "POST":
+        # Validaciones
+        resultado, respuesta = validateMunicipioParaEditar(request, municipio_id)
+
+        if resultado:
+            try:
+                # Actualizar campos existentes con los datos validados
+                municipio.nombre = respuesta.nombre
+                municipio.area = respuesta.area
+                municipio.presupuesto = respuesta.presupuesto
+                municipio.persona = respuesta.persona
+                municipio.save()
+                messages.success(request, "Información editada exitosamente.")
+            except Exception as e:
+                return render(
+                    request,
+                    "edicionMunicipio.html",
+                    {
+                        "success": False,
+                        "error": str(e),
+                        "municipio": {
+                            "id": municipio.id,
+                            "nombre": municipio.nombre,
+                            "area": municipio.area,
+                            "presupuesto": municipio.presupuesto,
+                            "persona": municipio.persona.id if municipio.persona else None,
+                        },
+                        "personas": personas,
+                    },
+                    status=400,
+                )
+            
+            return redirect("/gestion_municipios/")
+
+        else:
+
+
+            return render(
+                request,
+                "edicionMunicipio.html",
+                {
+                    "success": False,
+                    "error": respuesta,
+                    "municipio": {
+                        "id": municipio.id,
+                        "nombre": municipio.nombre,
+                        "area": municipio.area,
+                        "presupuesto": municipio.presupuesto,
+                        "persona": municipio.persona.id if municipio.persona else None,
+                    },
+                    "personas": personas,
+                },
+                status=400,
+            )
+
+    # En caso de GET, se envían los datos actuales del municipio
+    return render(
+        request,
+        "edicionMunicipio.html",
+        {
+            "success": None,
+            "municipio": {
+                "id": municipio.id,
+                "nombre": municipio.nombre,
+                "area": municipio.area,
+                "presupuesto": municipio.presupuesto,
+                "persona": municipio.persona.id if municipio.persona else None,
+            },
+            "personas": personas,
+        },
+    )
 
 def gestion_municipios(request):
 
@@ -431,6 +524,92 @@ def agregar_proyecto(request):
     )
 
     #return HttpResponse("Proyectos: " + str(personas) + str(municipios))
+
+@csrf_exempt
+def editar_proyecto(request, proyecto_id):
+    proyecto = get_object_or_404(Proyecto, id=proyecto_id)  # Busca el proyecto o devuelve 404
+    municipios = Municipio.objects.all()  # Lista de municipios para selección
+    personas = Persona.objects.all()  # Lista de responsables para selección
+
+    if request.method == "POST":
+        # Validar datos del formulario
+        resultado, respuesta = validateProyecto(request)
+
+        if resultado:
+            try:
+                # Actualizar campos existentes con los datos validados
+                proyecto.titulo = respuesta.titulo
+                proyecto.descripcion = respuesta.descripcion
+                proyecto.presupuesto = respuesta.presupuesto
+                proyecto.estado = respuesta.estado
+                proyecto.municipio = respuesta.municipio
+                proyecto.responsable = respuesta.responsable
+                proyecto.save()
+            except Exception as e:
+                return render(
+                    request,
+                    "edicionProyecto.html",
+                    {
+                        "success": False,
+                        "error": str(e),
+                        "proyecto": {
+                            "id": proyecto.id,
+                            "titulo": proyecto.titulo,
+                            "descripcion": proyecto.descripcion,
+                            "presupuesto": proyecto.presupuesto,
+                            "estado": proyecto.estado,
+                            "municipio": proyecto.municipio.id if proyecto.municipio else None,
+                            "responsable": proyecto.responsable.id if proyecto.responsable else None,
+                        },
+                        "municipios": municipios,
+                        "personas": personas,
+                    },
+                    status=400,
+                )
+            messages.success(request, "Información del proyecto editada exitosamente.")
+            return redirect("/gestion_proyectos/")
+
+        else:
+            return render(
+                request,
+                "edicionProyecto.html",
+                {
+                    "success": False,
+                    "error": respuesta,
+                    "proyecto": {
+                        "id": proyecto.id,
+                        "titulo": proyecto.titulo,
+                        "descripcion": proyecto.descripcion,
+                        "presupuesto": proyecto.presupuesto,
+                        "estado": proyecto.estado,
+                        "municipio": proyecto.municipio.id if proyecto.municipio else None,
+                        "responsable": proyecto.responsable.id if proyecto.responsable else None,
+                    },
+                    "municipios": municipios,
+                    "personas": personas,
+                },
+                status=400,
+            )
+
+    # En caso de GET, se envían los datos actuales del proyecto
+    return render(
+        request,
+        "edicionProyecto.html",
+        {
+            "success": None,
+            "proyecto": {
+                "id": proyecto.id,
+                "titulo": proyecto.titulo,
+                "descripcion": proyecto.descripcion,
+                "presupuesto": proyecto.presupuesto,
+                "estado": proyecto.estado,
+                "municipio": proyecto.municipio.id if proyecto.municipio else None,
+                "responsable": proyecto.responsable.id if proyecto.responsable else None,
+            },
+            "municipios": municipios,
+            "personas": personas,
+        },
+    )
 
 
 def gestion_proyectos(request):
