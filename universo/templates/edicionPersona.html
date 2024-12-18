@@ -76,8 +76,9 @@
                     <select
                         id="selVivienda"
                         name="vivienda_residencial"
-                        class="form-control">
-                        <option value="" disabled selected>
+                        class="form-control"
+                        required>
+                        <option value="" disabled {% if not persona.vivienda %} selected {% endif %}>
                             Seleccione la vivienda
                         </option>
                         {% for vivienda in viviendas %}
@@ -92,7 +93,7 @@
                         id="selCabezaFamilia"
                         name="cabeza_de_familia"
                         class="form-control">
-                        <option value="" {% if not persona.cabeza_de_familia %} selected {% endif %}>
+                        <option value="" disabled {% if not persona.cabeza_de_familia %} selected {% endif %}>
                             Seleccione una cabeza de familia
                         </option>
                         {% for otra_persona in personas %}

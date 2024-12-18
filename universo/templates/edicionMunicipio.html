@@ -48,8 +48,9 @@
                     <select
                         id="selPersona"
                         name="persona"
-                        class="form-control">
-                        <option value="" {% if not municipio.persona %} selected {% endif %}>
+                        class="form-control"
+                        required>
+                        <option value="" disabled {% if not municipio.persona %} selected {% endif %}>
                             Seleccione la persona encargada
                         </option>
                         {% for persona in personas %}

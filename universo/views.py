@@ -380,6 +380,7 @@ def gestion_viviendas(request):
 def eliminar_vivienda(request, id):
     vivienda = Vivienda.objects.get(id=id)
     vivienda.delete()
+    messages.success(request, "Vivienda eliminada exitosamente.")
     return redirect("/gestion_viviendas/")
 
 
@@ -526,6 +527,7 @@ def gestion_municipios(request):
 def eliminar_municipio(request, id):
     municipio = Municipio.objects.get(id=id)
     municipio.delete()
+    messages.success(request, "Municipio eliminado exitosamente.")
     return redirect("/gestion_municipios/")
 
 
@@ -538,6 +540,7 @@ def agregar_proyecto(request):
         if resultado:
             try:
                 respuesta.save()
+                messages.success(request, "Proyecto agregado correctamente.")
             except Exception as e:
                 """
                 return render(
@@ -550,11 +553,10 @@ def agregar_proyecto(request):
                     status=400,
                 )
                 """
-                return HttpResponse("Error: " + str(e))
-            # return render(request, "agregarProyecto.html", {"success": True})
-            return HttpResponse("Proyecto agregado correctamente")
+                # return HttpResponse("Error: " + str(e))
+            return render(request, "agregarProyecto.html", {"success": True})
+            # return HttpResponse("Proyecto agregado correctamente")
         else:
-            """
             return render(
                 request,
                 "agregarProyecto.html",
@@ -564,8 +566,8 @@ def agregar_proyecto(request):
                 },
                 status=400,
             )
-            """
-            return HttpResponse("Error: " + str(respuesta), status=400)
+
+            # return HttpResponse("Error: " + str(respuesta), status=400)
 
     personas = Persona.objects.all()
     municipios = Municipio.objects.all()
@@ -664,93 +666,6 @@ def editar_proyecto(request, proyecto_id):
         },
     )
 
-@csrf_exempt
-def editar_proyecto(request, proyecto_id):
-    proyecto = get_object_or_404(Proyecto, id=proyecto_id)  # Busca el proyecto o devuelve 404
-    municipios = Municipio.objects.all()  # Lista de municipios para selección
-    personas = Persona.objects.all()  # Lista de responsables para selección
-
-    if request.method == "POST":
-        # Validar datos del formulario
-        resultado, respuesta = validateProyecto(request)
-
-        if resultado:
-            try:
-                # Actualizar campos existentes con los datos validados
-                proyecto.titulo = respuesta.titulo
-                proyecto.descripcion = respuesta.descripcion
-                proyecto.presupuesto = respuesta.presupuesto
-                proyecto.estado = respuesta.estado
-                proyecto.municipio = respuesta.municipio
-                proyecto.responsable = respuesta.responsable
-                proyecto.save()
-            except Exception as e:
-                return render(
-                    request,
-                    "edicionProyecto.html",
-                    {
-                        "success": False,
-                        "error": str(e),
-                        "proyecto": {
-                            "id": proyecto.id,
-                            "titulo": proyecto.titulo,
-                            "descripcion": proyecto.descripcion,
-                            "presupuesto": proyecto.presupuesto,
-                            "estado": proyecto.estado,
-                            "municipio": proyecto.municipio.id if proyecto.municipio else None,
-                            "responsable": proyecto.responsable.id if proyecto.responsable else None,
-                        },
-                        "municipios": municipios,
-                        "personas": personas,
-                    },
-                    status=400,
-                )
-            messages.success(request, "Información del proyecto editada exitosamente.")
-            return redirect("/gestion_proyectos/")
-
-        else:
-            return render(
-                request,
-                "edicionProyecto.html",
-                {
-                    "success": False,
-                    "error": respuesta,
-                    "proyecto": {
-                        "id": proyecto.id,
-                        "titulo": proyecto.titulo,
-                        "descripcion": proyecto.descripcion,
-                        "presupuesto": proyecto.presupuesto,
-                        "estado": proyecto.estado,
-                        "municipio": proyecto.municipio.id if proyecto.municipio else None,
-                        "responsable": proyecto.responsable.id if proyecto.responsable else None,
-                    },
-                    "municipios": municipios,
-                    "personas": personas,
-                },
-                status=400,
-            )
-
-    # En caso de GET, se envían los datos actuales del proyecto
-    return render(
-        request,
-        "edicionProyecto.html",
-        {
-            "success": None,
-            "proyecto": {
-                "id": proyecto.id,
-                "titulo": proyecto.titulo,
-                "descripcion": proyecto.descripcion,
-                "presupuesto": proyecto.presupuesto,
-                "estado": proyecto.estado,
-                "municipio": proyecto.municipio.id if proyecto.municipio else None,
-                "responsable": proyecto.responsable.id if proyecto.responsable else None,
-            },
-            "municipios": municipios,
-            "personas": personas,
-        },
-    )
-
-
 def gestion_proyectos(request):
     proyectos = Proyecto.objects.all()
     return render(request, "gestionProyectos.html", {"proyectos": proyectos})
@@ -759,6 +674,7 @@ def gestion_proyectos(request):
 def eliminar_proyecto(request, id):
     proyecto = Proyecto.objects.get(id=id)
     proyecto.delete()
+    messages.success(request, "Proyecto eliminado exitosamente.")
     return redirect("/gestion_proyectos/")
 
 
@@ -772,6 +688,7 @@ def agregar_evento(request):
             try:
                 respuesta[0].save()
                 respuesta[1].save()
+                messages.success(request, "Evento agregado correctamente.")
             except Exception as e:
 
                 return render(
@@ -829,4 +746,5 @@ def eliminar_evento(request, id):
     eventoMunicipio = MunicipioEvento.objects.get(evento=evento)
     eventoMunicipio.delete()
     evento.delete()
+    messages.success(request, "Evento eliminado exitosamente.")
     return redirect("/gestion_eventos/")

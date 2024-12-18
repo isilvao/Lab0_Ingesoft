@@ -63,7 +63,8 @@
                     <select
                         id="selMunicipio"
                         name="municipio"
-                        class="form-control">
+                        class="form-control"
+                        required>
                         <option value="" disabled {% if not proyecto.municipio %} selected {% endif %}>
                             Seleccione el municipio
                         </option>
@@ -78,8 +79,9 @@
                     <select
                         id="selResponsable"
                         name="responsable"
-                        class="form-control">
-                        <option value="" {% if not proyecto.responsable %} selected {% endif %}>
+                        class="form-control"
+                        required>
+                        <option value="" disabled {% if not proyecto.responsable %} selected {% endif %}>
                             Seleccione el responsable
                         </option>
                         {% for persona in personas %}
