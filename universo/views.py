@@ -381,6 +381,7 @@ def gestion_viviendas(request):
 def eliminar_vivienda(request, id):
     vivienda = Vivienda.objects.get(id=id)
     vivienda.delete()
+    messages.success(request, "Vivienda eliminada exitosamente.")
     return redirect("/gestion_viviendas/")
 
 
@@ -443,6 +444,7 @@ def gestion_municipios(request):
 def eliminar_municipio(request, id):
     municipio = Municipio.objects.get(id=id)
     municipio.delete()
+    messages.success(request, "Municipio eliminado exitosamente.")
     return redirect("/gestion_municipios/")
 
 
@@ -538,6 +540,7 @@ def agregar_proyecto(request):
         if resultado:
             try:
                 respuesta.save()
+                messages.success(request, "Proyecto agregado correctamente.")
             except Exception as e:
                 return render(
                     request,
@@ -679,6 +682,7 @@ def gestion_proyectos(request):
 def eliminar_proyecto(request, id):
     proyecto = Proyecto.objects.get(id=id)
     proyecto.delete()
+    messages.success(request, "Proyecto eliminado exitosamente.")
     return redirect("/gestion_proyectos/")
 
 
@@ -692,6 +696,7 @@ def agregar_evento(request):
             try:
                 respuesta[0].save()
                 respuesta[1].save()
+                messages.success(request, "Evento agregado correctamente.")
             except Exception as e:
 
                 return render(
@@ -749,4 +754,5 @@ def eliminar_evento(request, id):
     eventoMunicipio = MunicipioEvento.objects.get(evento=evento)
     eventoMunicipio.delete()
     evento.delete()
+    messages.success(request, "Evento eliminado exitosamente.")
     return redirect("/gestion_eventos/")
