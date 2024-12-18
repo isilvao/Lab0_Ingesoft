@@ -1,0 +1,41 @@
+{% extends "./index.html" %}
+
+{% block title %} Listado de Viviendas {% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Listado de Viviendas</h2>
+        <a href="#" class="btn btn-primary">Agregar Vivienda</a>
+    </div>
+    <div class="table-responsive py-2">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th class="align-middle">Dirección</th>
+                    <th class="align-middle">Capacidad</th>
+                    <th class="align-middle">Niveles</th>
+                    <th class="align-middle">Área</th>
+                    <th class="align-middle">Municipio</th>
+                    <th class="align-middle">Propietario</th>
+                    <th class="align-middle" colspan="2">Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vivienda in viviendas %}
+                <tr>
+                    <td>{{ vivienda.direccion }}</td>
+                    <td>{{ vivienda.capacidad }}</td>
+                    <td>{{ vivienda.niveles }}</td>
+                    <td>{{ vivienda.area }}</td>
+                    <td>{{ vivienda.municipio.nombre }}</td>
+                    <td>{{ vivienda.propietario.nombre }}</td>
+                    <td><a href="edicionVivienda/{{ vivienda.id }}" class="btn btn-info">Editar</a></td>
+                    <td><a href="eliminarVivienda/{{ vivienda.id }}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

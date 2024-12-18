@@ -24,3 +24,9 @@ td {
   text-align: center;
   vertical-align: middle;
 }
+
+.card-hover:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    background-color: #3d444a !important; /* Cambia el color de fondo al hacer hover */
+}
