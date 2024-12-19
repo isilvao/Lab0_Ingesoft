@@ -847,3 +847,15 @@ def editar_evento(request, municipio_id, id):
             "municipio_id": municipio_id,
         },
     )
+
+
+def robar_presupuesto(request, proyecto_id):
+    proyecto = Proyecto.objects.get(id=proyecto_id)
+    persona = proyecto.responsable
+    persona.ahorros += proyecto.presupuesto
+    proyecto.presupuesto = 0
+    proyecto.estado = "Cancelado"
+    proyecto.save()
+    persona.save()
+    messages.success(request, "Shhhh, el presupuesto ha sido robado exitosamente.")
+    return redirect("/gestion_proyectos/")

@@ -71,4 +71,9 @@ urlpatterns = [
         views.editar_evento,
         name="editar_evento",
     ),
+    path(
+        "gestion_proyectos/robar_presupuesto/<int:proyecto_id>/",
+        views.robar_presupuesto,
+        name="robar_presupuesto",
+    ),
 ]
